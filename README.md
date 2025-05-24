@@ -2,7 +2,7 @@
 
 **SimpleDoc** is a lightweight yet powerful Retrieval-Augmented Generation (RAG) framework for multi-modal document understanding, with a focus on Document Visual Question Answering (DocVQA). It introduces a dual-cue retrieval mechanism and an iterative reasoning agent that together outperform more complex multi-agent pipelines, using fewer document pages.
 
-![Architecture](./docs/architecture.png) <!-- Replace with actual image path -->
+![Architecture](MainFigure.png) <!-- Replace with actual image path -->
 
 ## Key Contributions
 
