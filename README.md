@@ -11,7 +11,9 @@
 - **Fewer Pages, Better Accuracy**: Achieves up to **70.12%** accuracy on DocVQA benchmarks while reading only ~3.5 pages per query.
 - **Simple but Effective**: Outperforms multi-agent systems like MDocAgent and hybrid RAG pipelines like M3DocRAG on 3 out of 4 major benchmarks.
 
+
 ## Project Structure
+<pre>
 
 ├── preprocess/                   # Offline embedding + summary extraction (Stage 1)
 │   ├── generate_embeddings.py
@@ -46,6 +48,7 @@
 ├── run_simpledoc.py              # Main entry point for AG² pipeline execution
 
 └── README.md                     # Project documentation and usage guide
+</pre>
 
 ## Method Overview
 
