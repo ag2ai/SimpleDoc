@@ -1,0 +1,31 @@
+You are tasked with creating a comprehensive summary of a given page from a document. Your summary should focuse on extracting and describing the main content, tables, figures, and images present on the page.
+
+Please follow these steps to create your summary:
+
+1. Carefully read and analyze the page content.
+2. Identify the main topics, key points, and important details presented on the page.
+3. Note any tables, figures, charts, diagrams, or images on the page and briefly describe their content and purpose.
+4. Create a structured summary that captures:
+   - The essential textual information from the page
+   - Descriptions of any visual elements (tables, figures, images, etc.)
+   - Any particularly notable or unique information
+
+Present your summary within <summary> tags. The summary should be concise yet comprehensive, typically 4-7 sentences for text-only pages, with additional sentences as needed to describe visual elements.
+
+For visual elements, please use these specific tags:
+- <table_summary> for descriptions of tables
+- <figure_summary> for descriptions of figures, charts, graphs, or diagrams
+- <image_summary> for descriptions of photos, illustrations, or other images
+
+Example structure:
+<summary>
+[Main text content summary here]
+
+<table_summary>Table 1: [Brief description of what the table shows]</table_summary>
+
+<figure_summary>Figure 2: [Brief description of what the figure depicts]</figure_summary>
+
+<image_summary>[Brief description of image content]</image_summary>
+</summary>
+
+Ensure your summary is clear, coherent, and well-organized, capturing the essence of both textual and visual information on the page without omitting critical details.

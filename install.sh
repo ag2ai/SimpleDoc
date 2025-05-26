@@ -1,15 +1,14 @@
-pip install torch==2.4 torchvision torchaudio
-pip install git+https://github.com/huggingface/transformers@51ed61e2f05176f81fa7c9decba10cc28e138f61
-pip install accelerate
-pip install qwen_vl_utils argparse matplotlib pymupdf ipywidgets
-pip install pandas seaborn openai scikit-learn
-pip install hydra-core
+pip install ag2[openai] 
+pip install pandas 
+pip install PyMuPDF 
+pip install torch 
+pip install tqdm 
+pip install pillow 
+pip install pdfminer.six==20250506 
+pip install qwen-agent[rag]
 
-# Colpali
-pip install colpali_engine==0.1.1
-pip install mteb==1.2
+# Transformers >= 4.45.0 (required for ColQwen2.5)
+pip install "transformers>=4.45.0"
 
-# Colbert
-pip install ragatouille
-
-conda install git-lfs
+# Colpali Engine (install from source, latest version)
+pip install git+https://github.com/illuin-tech/colpali
