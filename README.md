@@ -13,39 +13,39 @@
 
 ## Project Structure
 
-├── preprocess/              # Offline embedding + summary extraction (Stage 1)
+├── preprocess/                   # Offline embedding + summary extraction (Stage 1)
 │   ├── generate_embeddings.py
 │   └── generate_summaries.py
 
-├── modules/               # Dual-cue retrieval logic (embedding + summary re-ranking) and Iterative QA and memory-based reasoning (Stage 2)
+├── modules/                      # Dual-cue retrieval + Iterative QA and memory-based reasoning (Stage 2)
 │   └── step02_page_retrieval.py
 
-├── prompts/                 # Prompt templates used for retrieval, QA, and memory update
+├── prompts/                      # Prompt templates used for retrieval, QA, and memory update
 │   ├── page_retrieval_prompt.txt
 │   └── doc_qa_prompt_v3.5.txt
 
-├── scripts/                 # Bash scripts for automation and HPC job submissions
+├── scripts/                      # Bash scripts for automation and HPC job submissions
 │   ├── preprocess_all.sh
 │   ├── run_simpledoc.sh
 
-├── agent/                 # AG²-compatible single-agent wrapper (SimpleDocAgent)
+├── agent/                        # AG²-compatible single-agent wrapper (SimpleDocAgent)
 │   └── simpledoc_agent.py
 
-├── utils/                   # Utility functions (e.g., OpenAI client initialization)
+├── utils/                        # Utility functions (e.g., OpenAI client initialization)
 │   └── openai_helper.py
 
-├── data/                    # Sample datasets, extracted text, embeddings, and PDFs
+├── data/                         # Sample datasets, extracted text, embeddings, and PDFs
 │   ├── MMLongBench/
 │   ├── LongDocURL/
 │   ├── FetaTab/
 │   └── PaperTab/
 
-├── outputs/                 # Final pipeline outputs (answers + metadata)
+├── outputs/                      # Final pipeline outputs (answers + metadata)
 │   └── simpledoc_results.json
 
-├── run_simpledoc.py         # Main entry point for AG² pipeline execution
+├── run_simpledoc.py              # Main entry point for AG² pipeline execution
 
-└── README.md                # Project documentation and usage guide
+└── README.md                     # Project documentation and usage guide
 
 ## Method Overview
 
