@@ -2,7 +2,7 @@
 
 **SimpleDoc** is a lightweight yet powerful Retrieval-Augmented Generation (RAG) framework for multi-modal document understanding, with a focus on Document Visual Question Answering (DocVQA). It introduces a dual-cue retrieval mechanism and an iterative reasoning agent that together outperform more complex multi-agent pipelines, using fewer document pages.
 
-![Architecture](MainFigure.png) <!-- Replace with actual image path -->
+![Architecture](figures/MainFigure.png) <!-- Replace with actual image path -->
 
 ## Key Contributions
 
@@ -13,13 +13,39 @@
 
 ## Project Structure
 
-├── preprocess/ # Offline embedding and summary extraction
-├── retriever/ # Dual-cue retrieval logic
-├── reasoner/ # Iterative reasoning and memory updates
-├── prompts/ # Structured prompts for all stages
-├── configs/ # Configuration and evaluation scripts
-├── run_simpledoc.py # Main entry point
-└── README.md
+├── preprocess/              # Offline embedding + summary extraction (Stage 1)
+│   ├── generate_embeddings.py
+│   └── generate_summaries.py
+
+├── modules/               # Dual-cue retrieval logic (embedding + summary re-ranking) and Iterative QA and memory-based reasoning (Stage 2)
+│   └── step02_page_retrieval.py
+
+├── prompts/                 # Prompt templates used for retrieval, QA, and memory update
+│   ├── page_retrieval_prompt.txt
+│   └── doc_qa_prompt_v3.5.txt
+
+├── scripts/                 # Bash scripts for automation and HPC job submissions
+│   ├── preprocess_all.sh
+│   ├── run_simpledoc.sh
+
+├── agent/                 # AG²-compatible single-agent wrapper (SimpleDocAgent)
+│   └── simpledoc_agent.py
+
+├── utils/                   # Utility functions (e.g., OpenAI client initialization)
+│   └── openai_helper.py
+
+├── data/                    # Sample datasets, extracted text, embeddings, and PDFs
+│   ├── MMLongBench/
+│   ├── LongDocURL/
+│   ├── FetaTab/
+│   └── PaperTab/
+
+├── outputs/                 # Final pipeline outputs (answers + metadata)
+│   └── simpledoc_results.json
+
+├── run_simpledoc.py         # Main entry point for AG² pipeline execution
+
+└── README.md                # Project documentation and usage guide
 
 ## Method Overview
 

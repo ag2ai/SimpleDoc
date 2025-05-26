@@ -1,0 +1,8 @@
+/outputs
+deepinfrakey
+openaikey
+/data
+.idea
+.cache
+__pycache__
+embeddings
