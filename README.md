@@ -19,33 +19,39 @@
 │   ├── generate_embeddings.py
 │   └── generate_summaries.py
 
+├── pipeline/                   
+│   ├── groupchat_controller.py
+│   └── run_simpledoc_chat.py
+
 ├── modules/                      # Dual-cue retrieval + Iterative QA and memory-based reasoning (Stage 2)
-│   └── step02_page_retrieval.py
+│   ├── step02_page_retrieval.py
+│   └── step03_target_page_qa.py
 
 ├── prompts/                      # Prompt templates used for retrieval, QA, and memory update
 │   ├── page_retrieval_prompt.txt
+│   ├── general_summary_propmt.txt
 │   └── doc_qa_prompt_v3.5.txt
 
-├── scripts/                      # Bash scripts for automation and HPC job submissions
-│   ├── preprocess_all.sh
+├── scripts/                      # Bash scripts
+│   ├── preprocess_embeddings.sh
+│   ├── preprocess_summaries.sh
 │   ├── run_simpledoc.sh
 
-├── agent/                        # AG²-compatible single-agent wrapper (SimpleDocAgent)
-│   └── simpledoc_agent.py
+├── agent/                        # AG2-compatible single-agent wrapper (SimpleDocAgent)
+│   ├── reasoning_agent.py
+│   └── retriever_agent.py
 
-├── utils/                        # Utility functions (e.g., OpenAI client initialization)
+├── utils/                        # Utility functions (e.g OpenAI client initialization)
+│   ├── pipeline_utils.py
 │   └── openai_helper.py
 
-├── data/                         # Sample datasets, extracted text, embeddings, and PDFs
+├── data/                         
 │   ├── MMLongBench/
 │   ├── LongDocURL/
 │   ├── FetaTab/
 │   └── PaperTab/
 
 ├── outputs/                      # Final pipeline outputs (answers + metadata)
-│   └── simpledoc_results.json
-
-├── run_simpledoc.py              # Main entry point for AG² pipeline execution
 
 └── README.md                     # Project documentation and usage guide
 </pre>
@@ -65,27 +71,51 @@ SimpleDoc operates in two distinct stages:
 - A **reasoning agent** decides whether the current context suffices to answer or if further refinement is needed.
 - The process continues iteratively, updating working memory and queries until the answer is found or the query is deemed unanswerable.
 
-## Requirements
-
-- Python 3.9+
-- [LlamaIndex](https://github.com/jerryjliu/llama_index)
-- [ChromaDB](https://github.com/chroma-core/chroma)
-- ColPali or ColQwen-2.5 embedding model
-- Qwen2.5-VL or compatible VLM
-- PDF parser (PyMuPDF or pdfminer.six)
-- OpenAI-compatible API (for local or cloud LLMs)
-
 ## Quickstart
 
+### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/simpledoc.git
+git clone https://github.com/Chelsi-create/simpledoc.git
 cd simpledoc
+```
 
-# Install dependencies
-pip install -r requirements.txt
+### 2. Environment Setup
+Create and activate the conda environment, then install dependencies:
+```bash
+conda create -n simpledoc python=3.12
+conda activate simpledoc
+bash install.sh
+```
 
-# Run preprocessing
-python preprocess/embed_and_summarize.py --input_dir ./pdfs
+### 3. Data Preparation
+Create the data directory and download the dataset:
+```bash
+mkdir data
+cd data
+```
 
-# Answer questions
-python run_simpledoc.py --query "What is the main finding of the study?" --doc ./pdfs/sample.pdf
+Make sure your data directory looks like this:
+<pre>
+simpledoc/
+├── data/
+│   └── MMLongBench/
+│       ├── samples.json
+│       └── documents/
+
+</pre>
+
+
+Download the dataset from [huggingface](https://huggingface.co/datasets/Lillianwei/Mdocagent-dataset) and place it in the data directory. The documents of PaperText are same as PaperTab. You can use symbol link or make a copy.
+
+### 4. Run the Pipeline
+Execute the pipeline in the following order using the provided scripts:
+```bash
+# Step 1: Generate LLM summaries
+bash scripts/preprocess_summaries.sh
+
+# Step 2: Generate visual embeddings
+bash scripts/preprocess_embeddings.sh
+
+# Step 3: Run the AG2-wrapped SimpleDoc multi-agent chat pipeline
+bash scripts/run_simpledoc.sh
+```
