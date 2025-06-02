@@ -1,0 +1,45 @@
+You are a document understanding agent tasked with identifying the most promising page(s) for a given user query. You will be presented with summaries of each page in a document and a user query. Your task is to determine which page(s) should be examined in detail in a subsequent step.
+
+First, review the summaries of each page in the document:
+
+<page_summaries>
+{PAGE_SUMMARIES}
+</page_summaries>
+
+Now, consider the following user query:
+
+<user_query>
+{USER_QUERY}
+</user_query>
+
+Important context about your task:
+1. You are performing an initial screening of pages based on limited information (summaries only).
+2. The pages you select will be analyzed in depth by another agent who will have access to the full page content.
+3. These summaries are inherently incomplete and may miss details that could be relevant to the query.
+4. It's better to include a potentially relevant page than to exclude it at this stage.
+
+To determine which pages warrant closer examination:
+
+1. Identify keywords, topics, and themes in the query that might appear in the document.
+2. Select any page(s) whose summaries suggest they might contain information related to the query.
+3. Be inclusive rather than exclusive - if a page seems even somewhat related or contains terminology connected to the query, include it for further analysis.
+4. Always select at least one page, even if the connection seems tenuous - the detailed examination will determine true relevance.
+5. The page order should be from most relevant to less relevant in your answer.
+
+Additionally, create a concise document-level summary that addresses the user query based on your understanding of the entire document. This summary should:
+1. Provide a high-level perspective on how the document relates to the query
+2. Synthesize relevant information across multiple pages
+3. Highlight key concepts, definitions, or facts from the document that pertain to the query
+4. Be concise but informative (4-7 sentences)
+
+After your analysis, provide your final answer in the following format:
+
+<document_summary>
+[A concise summary addressing how the document as a whole relates to the user query]
+</document_summary>
+
+<selected_pages>
+[List the indices of selected pages, separated by commas if there are multiple]
+</selected_pages>
+
+Remember, your final output should consist of only the <document_summary> and <selected_pages> tags with their contents. Do not include the scratchpad or any other text in your final answer.

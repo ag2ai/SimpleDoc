@@ -4,7 +4,7 @@ import argparse
 from tqdm import tqdm
 from types import SimpleNamespace
 
-from pipeline.groupchat_controller import create_groupchat
+from groupchat_controller import create_groupchat
 
 
 def parse_arguments():
@@ -28,6 +28,7 @@ def parse_arguments():
     parser.add_argument("--max_iter", type=int, default=3)
     parser.add_argument("--max_pages", type=int, default=10)
     parser.add_argument("--max_page_retrieval", type=int, default=30)
+    parser.add_argument("--cache_seed", type=int, default=123, help="Seed for OpenAI cache")
     return parser.parse_args()
 
 
@@ -44,17 +45,56 @@ def main():
 
     # Run each sample through the GroupChat pipeline
     all_results = []
+    # for sample in tqdm(samples, desc="Running SimpleDoc Chat"):
+    #     manager = create_groupchat(args)
+    #     # print(f"type of recipient: {type(manager.groupchat.agents[0])}")
+    #     final_message = manager.initiate_chat(message={"content": str(sample)}, recipient=manager.groupchat.agents[0])
+    #     final_result = final_message.chat_history[-1]["content"]
+    #     all_results.append(final_result)
+
+    # # Save results
+    #     with open(args.output_file, "w", encoding="utf-8") as f:
+    #         json.dump(all_results, f, indent=2, ensure_ascii=False)
+
     for sample in tqdm(samples, desc="Running SimpleDoc Chat"):
         manager = create_groupchat(args)
-        final_message = manager.initiate_chat(message={"content": sample})
-        final_result = final_message.get("content", {})
+        chat_result = manager.initiate_chat(message={"content": str(sample)}, recipient=manager.groupchat.agents[0])
+
+        reasoning_reply = None
+        retriever_output = None
+
+        for msg in reversed(chat_result.chat_history):
+            if msg.get("name", "") == "ReasoningAgent" and reasoning_reply is None:
+                reasoning_reply = msg["content"]
+            elif msg.get("name", "") == "RetrieverAgent" and retriever_output is None:
+                try:
+                    retriever_output = json.loads(msg["content"])
+                except Exception:
+                    retriever_output = {}
+
+            if reasoning_reply and retriever_output:
+                break
+        
+        try:
+            parsed_reasoning = json.loads(reasoning_reply)
+            final_answer_clean = parsed_reasoning.get("final_answer", reasoning_reply)
+        except Exception:
+            final_answer_clean = reasoning_reply
+
+        final_result = {
+            "input": sample,
+            "final_answer": final_answer_clean,
+            "relevant_pages": retriever_output.get("relevant_pages", []),
+            "document_summary": retriever_output.get("document_summary", "")
+        }
+
         all_results.append(final_result)
 
-    # Save results
-    with open(args.output_file, "w", encoding="utf-8") as f:
-        json.dump(all_results, f, indent=2, ensure_ascii=False)
-    print(f"All results saved to {args.output_file}")
+        # Save after each sample
+        with open(args.output_file, "w", encoding="utf-8") as f:
+            json.dump(all_results, f, indent=2, ensure_ascii=False)
 
+    print(f"All results saved to {args.output_file}")
 
 if __name__ == "__main__":
     main()

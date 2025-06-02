@@ -77,6 +77,7 @@ def query_llm_for_page_retrieval(question, page_summaries, model_name, client, m
     Returns:
         openai.ChatCompletionMessage: The response from the LLM.
     """
+    print("Using the qwen llm func")
     with open(prompt_file, 'r') as f:
         prompt = f.read()
 
@@ -125,6 +126,7 @@ def extract_relevant_pages(response):
     Returns:
         list: The extracted relevant page numbers as a list, or empty list if extraction fails.
     """
+    print("Using the extract_relevant_page func")
     try:
         # Extract content between <selected_pages> tags
         start_idx = response.find('<selected_pages>')
@@ -154,6 +156,7 @@ def extract_document_summary(response):
     Returns:
         str: The extracted document summary, or empty string if extraction fails.
     """
+    print("Using the extract_document_summary func")
     try:
         # Extract content between <document_summary> tags
         start_idx = response.find('<document_summary>')
@@ -534,6 +537,7 @@ def main():
             json.dump(updated_results, f, ensure_ascii=False, indent=2)
 
         dataset_df = pd.read_json(args.input_file)
+        print(args.input_file)
         # Evaluate the retrieval performance
         eval_metrics = evaluate_retrievals(dataset_df, updated_results)
 

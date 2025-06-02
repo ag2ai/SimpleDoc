@@ -49,7 +49,7 @@ def parse_arguments():
                         help="Number of samples to randomly select from valid questions with target pages. If None, use all samples.")
     
     # Text extraction parameter
-    parser.add_argument("--extract_text", action="store_true", default=True,
+    parser.add_argument("--extract_text", action="store_true", default=False,
                         help="Extract text from PDF pages and include it in the prompt")
     
     # Parallelization parameter

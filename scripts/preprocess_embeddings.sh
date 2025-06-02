@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "Running Step 01: Generating ColQwen2.5 Embeddings"
+echo "Runngin Step 01: Generating ColQwen2.5 Embeddings"
 
-python preprocess/generate_embeddings.py \
+accelerate launch --num_processes 2 preprocess/generate_embeddings.py \
     --input_dir data/MMLongBench \
     --image_dpi 150 \
-    --num_workers 8
+    --num_workers 1

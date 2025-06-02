@@ -24,6 +24,8 @@ class PDFPageDataset(Dataset):
         # Build index of PDF pages
         self.page_index = {}
         self.id_2_doc = []
+
+        print(f"[DEBUG] Indexing {len(pdf_paths)} PDFs...")
         for pdf_path in tqdm(pdf_paths, desc="Indexing PDFs"):
             self.page_index[os.path.basename(pdf_path)] = []
             self.id_2_doc.append(os.path.basename(pdf_path))
@@ -36,8 +38,6 @@ class PDFPageDataset(Dataset):
                 })
             doc.close()
 
-
-        
         print(f"Indexed {len(self.page_index)} pages from {len(pdf_paths)} PDFs")
         
     def __len__(self):
@@ -72,6 +72,7 @@ class PDFPageDataset(Dataset):
 
 # Custom collate function to handle PIL images
 def collate_fn(batch):
+    print(f"[DEBUG] Preprocessing images for batch: {batch['pdf_path']}")
     batch["image"] = processor.process_images(batch["image"])
     return batch
 
@@ -84,6 +85,7 @@ def process_batch(model, batch):
         print(f"Embedding already exists for {batch['pdf_path']}, skipping.")
         return
 
+    print(f"[INFO] Processing batch for: {batch['pdf_path']}")
     with torch.no_grad():
         batch_images = batch["image"].to(model.device)
         image_embeddings = model(**batch_images)
@@ -91,6 +93,7 @@ def process_batch(model, batch):
 
     os.makedirs(os.path.dirname(embedding_path), exist_ok=True)
     torch.save(image_embeddings, embedding_path)
+    print(f"[SUCCESS] Saved embedding to: {embedding_path}")
 
 
 def main():
@@ -103,21 +106,30 @@ def main():
     
     # Initialize accelerator
     accelerator = Accelerator()
+    print(f"[INFO] Using {accelerator.num_processes}")
+    print(f"[INFO] Device: {accelerator.device}")
     
+    print("[INFO] Loading ColQwen2.5 model...")
     model = ColQwen2_5.from_pretrained(
         "vidore/colqwen2.5-v0.2",
         torch_dtype=torch.bfloat16,
-        device_map='cuda',
-        attn_implementation="flash_attention_2" if is_flash_attn_2_available() else None,
-    ).eval()
+        trust_remote_code=True,
+        device_map='auto',
+        # attn_implementation="flash_attention_2" if is_flash_attn_2_available() else None,
+    )
 
-    
+    model = accelerator.prepare(model).eval()
+    print("[INFO] Model loaded and prepared.")
+
+
     # Get PDF files
     pdf_files = sorted(glob(f"{args.input_dir}/*/*.pdf", recursive=True))
+    print(f"[INFO] Found {len(pdf_files)} PDF files")
     
-    # Create dataset and dataloader
-    print(f"Processing {len(pdf_files)} PDF files")
+    # # Create dataset and dataloader
+    # print(f"Processing {len(pdf_files)} PDF files")
     
+    print("Loading Dataloader")
     # Create dataset and dataloader
     dataset = PDFPageDataset(pdf_files, image_dpi=args.image_dpi)
     dataloader = DataLoader(

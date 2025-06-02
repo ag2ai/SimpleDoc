@@ -220,7 +220,7 @@ def query_llm_with_images(question: str, base64_images_list: list[str], model_na
         # Create request to Qwen-VL with base64 images
         print(f"Because the answer contains <visual_query>, we will call Qwen-VL with query '{visual_query}' and images.")
         response = client_img.create(
-            model="Qwen/Qwen2.5-VL-32B-Instruct",
+            model="Qwen/Qwen2.5-VL-7B-Instruct",
             messages=[
                 {
                     "role": "user",

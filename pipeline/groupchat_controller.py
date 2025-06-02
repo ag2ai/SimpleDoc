@@ -1,6 +1,10 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from autogen import GroupChat, GroupChatManager
-from agents.retriever_agent import RetrieverAgent
-from agents.reasoning_agent import ReasoningAgent
+from agent.retriever_agent import RetrieverAgent
+from agent.reasoning_agent import ReasoningAgent
 
 
 def create_groupchat(args):
@@ -13,9 +17,15 @@ def create_groupchat(args):
     groupchat = GroupChat(
         agents=[retriever, reasoner],
         messages=[],
-        max_round=args.max_iter,
-        allow_repeat_user=False
+        max_round=args.max_iter
     )
+
+    def custom_selector(last, groupchat):
+        if last is None:
+            return retriever 
+        return reasoner if last == retriever else retriever
+
+    groupchat.select_speaker = custom_selector
 
     manager = GroupChatManager(
         groupchat=groupchat,
