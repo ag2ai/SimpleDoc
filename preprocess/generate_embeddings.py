@@ -110,12 +110,13 @@ def main():
     print(f"[INFO] Device: {accelerator.device}")
     
     print("[INFO] Loading ColQwen2.5 model...")
+    print("is_flash_attn_2_available = ", is_flash_attn_2_available())
     model = ColQwen2_5.from_pretrained(
         "vidore/colqwen2.5-v0.2",
         torch_dtype=torch.bfloat16,
         trust_remote_code=True,
         device_map='auto',
-        # attn_implementation="flash_attention_2" if is_flash_attn_2_available() else None,
+        attn_implementation="flash_attention_2" if is_flash_attn_2_available() else None,
     )
 
     model = accelerator.prepare(model).eval()

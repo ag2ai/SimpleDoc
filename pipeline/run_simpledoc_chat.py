@@ -43,22 +43,26 @@ def main():
     # Create output dir
     os.makedirs(os.path.dirname(args.output_file), exist_ok=True)
 
-    # Run each sample through the GroupChat pipeline
-    all_results = []
-    # for sample in tqdm(samples, desc="Running SimpleDoc Chat"):
-    #     manager = create_groupchat(args)
-    #     # print(f"type of recipient: {type(manager.groupchat.agents[0])}")
-    #     final_message = manager.initiate_chat(message={"content": str(sample)}, recipient=manager.groupchat.agents[0])
-    #     final_result = final_message.chat_history[-1]["content"]
-    #     all_results.append(final_result)
 
-    # # Save results
-    #     with open(args.output_file, "w", encoding="utf-8") as f:
-    #         json.dump(all_results, f, indent=2, ensure_ascii=False)
+    if os.path.exists(args.output_file):
+        with open(args.output_file, "r", encoding="utf-8") as f:
+            all_results = json.load(f)
+        processed_inputs = {json.dumps(r["input"], sort_keys=True) for r in all_results}
+        print(f"Loaded {len(all_results)} previously processed results.")
+    else:
+        all_results = []
+        processed_inputs = set()
+
+    # # Run each sample through the GroupChat pipeline
+    # all_results = []
 
     for sample in tqdm(samples, desc="Running SimpleDoc Chat"):
+        sample_key = json.dumps(sample, sort_keys=True)
+        if sample_key in processed_inputs:
+            print("Yes")
+            continue
         manager = create_groupchat(args)
-        chat_result = manager.initiate_chat(message={"content": str(sample)}, recipient=manager.groupchat.agents[0])
+        chat_result = manager.initiate_chat(message={"content": json.dumps(sample)}, recipient=manager.groupchat.agents[0])
 
         reasoning_reply = None
         retriever_output = None

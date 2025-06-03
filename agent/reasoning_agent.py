@@ -18,59 +18,6 @@ class ReasoningAgent(ConversableAgent):
         self.client_img = self.client  # fallback if needed
         self.register_reply(trigger=[Agent, None], reply_func=custom_generate_reply, position=0)
 
-    # def generate_response(self, messages, sender, config):
-    #     print(f"[ReasoningAgent] Triggered for question: {question}")
-    #     msg = json.loads(messages[-1]["content"])
-    #     doc_id = msg["doc_id"]
-    #     question = msg["question"]
-    #     retrieved_pages = msg["relevant_pages"]
-    #     document_summary = msg.get("document_summary", "")
-
-    #     pdf_path = os.path.join(self.args.data_base_path, doc_id)
-        
-    #     if self.args.extract_text:
-    #         try:
-    #             with open(pdf_path.replace('.pdf', '.txt').replace('/documents/', '/text_doc/'), 'rb') as f:
-    #                 pdf_data = json.load(f)
-    #             page_texts = [str(pdf_data[int(i) - 1]) for i in retrieved_pages]
-    #         except:
-    #             page_texts = ["" for _ in retrieved_pages]
-    #     else:
-    #         page_texts = ["" for _ in retrieved_pages]
-
-    #     images, _ = convert_pdf_pages_to_base64_images(
-    #         pdf_path, retrieved_pages, self.args.image_dpi, extract_text=False
-    #     )
-    #     print(f"[ReasoningAgent] Retrieved {len(images)} images for doc_id: {doc_id}")
-
-    #     print(f"[ReasoningAgent] Sending query to model: {self.args.qa_model}")
-    #     llm_response = query_llm_with_images(
-    #         question,
-    #         images,
-    #         self.args.qa_model,
-    #         self.client,
-    #         self.args.max_tokens_qa,
-    #         self.args.qa_prompt_file,
-    #         retrieved_pages,
-    #         page_texts,
-    #         document_summary,
-    #         args=self.args,
-    #         client_img=self.client_img
-    #     )
-
-    #     if llm_response:
-    #         answer, response_type = postprocess_answer(llm_response)
-    #     else:
-    #         answer, response_type = None, "no_response"
-
-    #     return {
-    #         "doc_id": doc_id,
-    #         "question": question,
-    #         "final_answer": answer,
-    #         "response_type": response_type
-    #     }
-
-
 def custom_generate_reply(agent, messages, sender, config):
     msg = json.loads(messages[-1]["content"])
     question = msg["question"]

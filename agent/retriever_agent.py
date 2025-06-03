@@ -32,7 +32,7 @@ class RetrieverAgent(ConversableAgent):
         self.register_reply(trigger=[Agent, None], reply_func=custom_generate_reply, position=0)
 
 def custom_generate_reply(agent, messages, sender, config):
-    message = ast.literal_eval(messages[-1]["content"])
+    message = json.loads(messages[-1]["content"])
     print(type(message))
     print(message)
     doc_id = message["doc_id"]

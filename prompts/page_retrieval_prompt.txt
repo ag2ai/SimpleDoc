@@ -26,16 +26,19 @@ To determine which pages warrant closer examination:
 4. Always select at least one page, even if the connection seems tenuous - the detailed examination will determine true relevance.
 5. The page order should be from most relevant to less relevant in your answer.
 
-Additionally, create a concise document-level summary that addresses the user query based on your understanding of the entire document. This summary should:
+Additionally, create a comprehensive document-level summary that addresses the user query based on your understanding of the entire document. This summary should:
 1. Provide a high-level perspective on how the document relates to the query
 2. Synthesize relevant information across multiple pages
 3. Highlight key concepts, definitions, or facts from the document that pertain to the query
-4. Be concise but informative (4-7 sentences)
+4. Outline a strategic approach to solving the query based on the document's content
+5. Identify potential solution paths and the types of information that should be prioritized
+6. Do not be too certain about the conclusions drawn from the summaries, as they may not capture all relevant details
+7. Be concise but informative (5-8 sentences)
 
 After your analysis, provide your final answer in the following format:
 
 <document_summary>
-[A concise summary addressing how the document as a whole relates to the user query]
+[A comprehensive summary addressing how the document relates to the user query AND your strategic thoughts on how to solve the query based on the document's content and structure]
 </document_summary>
 
 <selected_pages>

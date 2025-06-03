@@ -90,6 +90,11 @@ def query_llm_for_page_retrieval(question, page_summaries, model_name, client, m
     # Format the prompt with the page summaries and user question
     prompt = prompt.format(PAGE_SUMMARIES=formatted_summaries, USER_QUERY=question)
 
+    estimated_input_tokens = len(prompt) // 4
+    model_limit = 40960
+    reserved = 500  # safety margin
+    adjusted_max_tokens = max(min(max_tokens, model_limit - estimated_input_tokens - reserved), 256)
+
     try:
         response = client.create(
             model=model_name,
@@ -102,7 +107,7 @@ def query_llm_for_page_retrieval(question, page_summaries, model_name, client, m
             temperature=0.6,
             top_p=0.95,
             extra_body={"top_k": 20, "min_p": 0}, # , "chat_template_kwargs": {"enable_thinking": False}
-            max_tokens=max_tokens,
+            max_tokens=adjusted_max_tokens,
             # reasoning_effort='none',
         )
     except openai.APIError or TimeoutError as e:
@@ -112,6 +117,12 @@ def query_llm_for_page_retrieval(question, page_summaries, model_name, client, m
     if response.choices[0].finish_reason == "length":
         print("Response length exceeded the limit.")
         return None
+
+    message = response.choices[0].message
+    if message.content is None:
+        print("Received empty message content from LLM.")
+        return None
+
 
     return response.choices[0].message
 
