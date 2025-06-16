@@ -107,6 +107,34 @@ simpledoc/
 
 Download the dataset from [huggingface](https://huggingface.co/datasets/Lillianwei/Mdocagent-dataset) and place it in the data directory. The documents of PaperText are same as PaperTab. You can use symbol link or make a copy.
 
+### 4. VLLM Setup
+For setting up the VLLM server, the following official resources provide the most reliable and up-to-date guidance:
+1) [Installation Guide (GPU)](https://docs.vllm.ai/en/latest/getting_started/installation/gpu.html#create-a-new-python-environment)
+
+2) [Running the Server via CLI](https://docs.vllm.ai/en/latest/cli/index.html)
+
+You can install VLLM as described above and start the server using the vllm serve command.
+We use 2 x H100 94GB to run the model:
+
+For Qwen3-30B-A3B:
+
+<pre>
+vllm serve Qwen/Qwen3-30B-A3B --enable-reasoning --reasoning-parser deepseek_r1 \
+--gpu_memory_utilization=0.95 --enable_prefix_caching --tensor-parallel-size=2 \
+--rope-scaling '{"rope_type":"yarn","factor":4.0,"original_max_position_embeddings":32768}' --max-model-len 131072
+</pre>
+
+For Qwen2.5-VL-32B:
+
+<pre>
+vllm serve Qwen/Qwen2.5-VL-32B-Instruct --dtype bfloat16 \
+--gpu_memory_utilization=0.95 --enable_prefix_caching --tensor-parallel-size=2 \
+--limit-mm-per-prompt image=20
+</pre>
+
+Because we run on 2 GPUs, so we set tensor-parallel-size=2 . Set to 1 if you want to only use 1 GPU. The Qwen2.5-VL-32B might not fit into a single 80GB GPU ( If it cannot, it will give OOM error ). 
+
+
 ### 4. Run the Pipeline
 Execute the pipeline in the following order using the provided scripts:
 ```bash
