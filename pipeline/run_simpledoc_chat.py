@@ -29,6 +29,7 @@ def parse_arguments():
     parser.add_argument("--max_pages", type=int, default=10)
     parser.add_argument("--max_page_retrieval", type=int, default=30)
     parser.add_argument("--cache_seed", type=int, default=123, help="Seed for OpenAI cache")
+    parser.add_argument("--use_embedding_based_retrieval", action="store_true", default=True)
     return parser.parse_args()
 
 
