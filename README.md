@@ -1,5 +1,7 @@
 # SimpleDoc
 
+[![Paper](https://img.shields.io/badge/paper-A42C25?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2506.14035) 
+
 **SimpleDoc** is a lightweight yet powerful Retrieval-Augmented Generation (RAG) framework for multi-modal document understanding, with a focus on Document Visual Question Answering (DocVQA). It introduces a dual-cue retrieval mechanism and an iterative reasoning agent that together outperform more complex multi-agent pipelines, using fewer document pages.
 
 ![Architecture](figures/simpledoc_fig.png) <!-- Replace with actual image path -->
@@ -11,50 +13,6 @@
 - **Fewer Pages, Better Accuracy**: Achieves up to **70.12%** accuracy on DocVQA benchmarks while reading only ~3.5 pages per query.
 - **Simple but Effective**: Outperforms multi-agent systems like MDocAgent and hybrid RAG pipelines like M3DocRAG on 3 out of 4 major benchmarks.
 
-
-## Project Structure
-<pre>
-
-├── preprocess/                   # Offline embedding + summary extraction (Stage 1)
-│   ├── generate_embeddings.py
-│   └── generate_summaries.py
-
-├── pipeline/                   
-│   ├── groupchat_controller.py
-│   └── run_simpledoc_chat.py
-
-├── modules/                      # Dual-cue retrieval + Iterative QA and memory-based reasoning (Stage 2)
-│   ├── step02_page_retrieval.py
-│   └── step03_target_page_qa.py
-
-├── prompts/                      # Prompt templates used for retrieval, QA, and memory update
-│   ├── page_retrieval_prompt.txt
-│   ├── general_summary_propmt.txt
-│   └── doc_qa_prompt_v3.5.txt
-
-├── scripts/                      # Bash scripts
-│   ├── preprocess_embeddings.sh
-│   ├── preprocess_summaries.sh
-│   ├── run_simpledoc.sh
-
-├── agent/                        # AG2-compatible single-agent wrapper (SimpleDocAgent)
-│   ├── reasoning_agent.py
-│   └── retriever_agent.py
-
-├── utils/                        # Utility functions (e.g OpenAI client initialization)
-│   ├── pipeline_utils.py
-│   └── openai_helper.py
-
-├── data/                         
-│   ├── MMLongBench/
-│   ├── LongDocURL/
-│   ├── FetaTab/
-│   └── PaperTab/
-
-├── outputs/                      # Final pipeline outputs (answers + metadata)
-
-└── README.md                     # Project documentation and usage guide
-</pre>
 
 ## Method Overview
 
@@ -75,7 +33,7 @@ SimpleDoc operates in two distinct stages:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Chelsi-create/simpledoc.git
+git clone https://github.com/ag2ai/simpledoc.git
 cd simpledoc
 ```
 
@@ -146,4 +104,63 @@ bash scripts/preprocess_embeddings.sh
 
 # Step 3: Run the AG2-wrapped SimpleDoc multi-agent chat pipeline
 bash scripts/run_simpledoc.sh
+```
+
+
+
+## Project Structure
+<pre>
+
+├── preprocess/                   # Offline embedding + summary extraction (Stage 1)
+│   ├── generate_embeddings.py
+│   └── generate_summaries.py
+
+├── pipeline/                   
+│   ├── groupchat_controller.py
+│   └── run_simpledoc_chat.py
+
+├── modules/                      # Dual-cue retrieval + Iterative QA and memory-based reasoning (Stage 2)
+│   ├── step02_page_retrieval.py
+│   └── step03_target_page_qa.py
+
+├── prompts/                      # Prompt templates used for retrieval, QA, and memory update
+│   ├── page_retrieval_prompt.txt
+│   ├── general_summary_propmt.txt
+│   └── doc_qa_prompt_v3.5.txt
+
+├── scripts/                      # Bash scripts
+│   ├── preprocess_embeddings.sh
+│   ├── preprocess_summaries.sh
+│   ├── run_simpledoc.sh
+
+├── agent/                        # AG2-compatible single-agent wrapper (SimpleDocAgent)
+│   ├── reasoning_agent.py
+│   └── retriever_agent.py
+
+├── utils/                        # Utility functions (e.g OpenAI client initialization)
+│   ├── pipeline_utils.py
+│   └── openai_helper.py
+
+├── data/                         
+│   ├── MMLongBench/
+│   ├── LongDocURL/
+│   ├── FetaTab/
+│   └── PaperTab/
+
+├── outputs/                      # Final pipeline outputs (answers + metadata)
+
+└── README.md                     # Project documentation and usage guide
+</pre>
+
+
+## Citation
+If you find this work useful, please cite our paper:
+
+```bibtex
+@article{jain2024simpledoc,
+  title={SimpleDoc: Multi-Modal Document Understanding with Dual-Cue Page Retrieval and Iterative Refinement},
+  author={Jain, Chelsi and Wu, Yiran and Zeng, Yifan and Liu, Jiale and Dai, Shengyu and Shao, Zhenwen and Wu, Qingyun and Wang, Huazheng},
+  journal={arXiv preprint arXiv:2506.14035},
+  year={2024}
+}
 ```
