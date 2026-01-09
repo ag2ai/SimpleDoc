@@ -33,7 +33,7 @@ class PDFPageDataset(Dataset):
             for page_num in range(doc.page_count):
                 self.page_index[os.path.basename(pdf_path)].append({
                     "pdf_path": pdf_path,
-                    "page_num": page_num,
+                    "page_num":  page_num,
                     "doc_id": os.path.basename(pdf_path)
                 })
             doc.close()
@@ -78,18 +78,43 @@ def collate_fn(batch):
 
 
 
-def process_batch(model, batch):
-    """Process a batch of PDF pages and save embeddings"""
+def process_batch(model, batch, batch_size=8):
+    """Process a batch of PDF pages with memory-safe chunking
+    
+    Args: 
+        model: The ColQwen2.5 model
+        batch: Dictionary containing processed images and metadata
+        batch_size: Number of pages to process at once (default: 32)
+    """
     embedding_path = batch["pdf_path"].replace("documents", "embeddings").replace('.pdf', '.pt')
     if os.path.exists(embedding_path):
         print(f"Embedding already exists for {batch['pdf_path']}, skipping.")
         return
 
     print(f"[INFO] Processing batch for: {batch['pdf_path']}")
+    
+    all_embeddings = []
+    batch_images = batch["image"]
+    total_pages = batch_images["input_ids"].shape[0]
+    
+    print(f"[INFO] Processing {total_pages} pages with batch size {batch_size}")
+    
     with torch.no_grad():
-        batch_images = batch["image"].to(model.device)
-        image_embeddings = model(**batch_images)
-
+        for i in range(0, total_pages, batch_size):
+            # Process only a chunk of pages at a time
+            mini_batch = {
+                k: v[i: i + batch_size].to(model.device) 
+                for k, v in batch_images.items()
+            }
+            embeddings = model(**mini_batch)
+            all_embeddings.append(embeddings.cpu())  # Move to CPU to free GPU memory
+            
+            # Clear GPU cache to prevent OOM
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+    
+    # Concatenate all embeddings
+    image_embeddings = torch.cat(all_embeddings, dim=0)
 
     os.makedirs(os.path.dirname(embedding_path), exist_ok=True)
     torch.save(image_embeddings, embedding_path)
@@ -101,6 +126,7 @@ def main():
     parser.add_argument("--input_dir", type=str, default="data/MMLongBench", help="Input directory containing PDF documents")
     parser.add_argument("--image_dpi", type=int, default=150, help="DPI for rendering PDF pages")
     parser.add_argument("--num_workers", type=int, default=8, help="Number of workers for data loading")
+    parser.add_argument("--batch_size", type=int, default=32, help="Number of pages to process at once per PDF")
     
     args = parser.parse_args()
     
@@ -143,7 +169,7 @@ def main():
     
     # Process batches
     for batch in tqdm(dataloader, desc=f"Processing PDF Documents"):
-        process_batch(model, batch)
+        process_batch(model, batch, batch_size=args.batch_size)
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
     main()
