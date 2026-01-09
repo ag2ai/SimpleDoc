@@ -87,7 +87,7 @@ For Qwen2.5-VL-32B:
 <pre>
 vllm serve Qwen/Qwen2.5-VL-32B-Instruct --dtype bfloat16 \
 --gpu_memory_utilization=0.95 --enable_prefix_caching --tensor-parallel-size=2 \
---limit-mm-per-prompt image=20
+--limit-mm-per-prompt.image=20
 </pre>
 
 Because we run on 2 GPUs, so we set tensor-parallel-size=2 . Set to 1 if you want to only use 1 GPU. The Qwen2.5-VL-32B might not fit into a single 80GB GPU ( If it cannot, it will give OOM error ). 
