@@ -103,7 +103,7 @@ def process_batch(model, batch, batch_size=8):
         for i in range(0, total_pages, batch_size):
             # Process only a chunk of pages at a time
             mini_batch = {
-                k: v[i: i + batch_size].to(model.device) 
+                k: v[i:  i + batch_size].to(model.device)
                 for k, v in batch_images.items()
             }
             embeddings = model(**mini_batch)
@@ -141,7 +141,7 @@ def main():
         "vidore/colqwen2.5-v0.2",
         torch_dtype=torch.bfloat16,
         trust_remote_code=True,
-        device_map='auto',
+        device_map='cuda',
         attn_implementation="flash_attention_2" if is_flash_attn_2_available() else None,
     )
 
